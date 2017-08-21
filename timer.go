@@ -11,62 +11,68 @@ import (
 
 // Launch starts the app
 func Launch() {
-	systray.Run(onReady)
-}
-
-var (
-	timerRunning   = false
-	timerStartedAt time.Time
-	appName        = "gotime"
-
-	mStartTimer *systray.MenuItem
-)
-
-func onReady() {
-	// XXX requires a .ico on windows
-	systray.SetIcon(assetData("assets/mac/icon.png"))
-
-	mStartTimer = systray.AddMenuItem("Start stopwatch", "")
-	systray.AddMenuSeparatorItem()
-	mQuit := systray.AddMenuItem("Quit "+appName, "")
-
-	go func() {
-		for {
-			time.Sleep(500 * time.Millisecond)
-			if timerRunning {
-				updateRunningTimer()
-			}
-		}
-	}()
-
-	for {
-		select {
-		case <-mStartTimer.ClickedCh:
-			if !timerRunning {
-				timerRunning = true
-				timerStartedAt = time.Now()
-				updateRunningTimer()
-				mStartTimer.SetTitle("Stop stopwatch")
-				notify.Notify(appName, "Stopwatch started", "", "assets/icon128.png")
-			} else {
-				timerRunning = false
-				systray.SetTitle("")
-				mStartTimer.SetTitle("Start stopwatch")
-				notify.Notify(appName, "Stopwatch stopped after "+renderRunningTime(), "", "assets/icon128.png")
-			}
-		case <-mQuit.ClickedCh:
-			systray.Quit()
-			os.Exit(0)
-		}
+	app := app{
+		name: "gotime",
 	}
+
+	app.Run()
 }
 
-func updateRunningTimer() {
-	systray.SetTitle(renderRunningTime())
+type app struct {
+	stopwatchRunning   bool
+	stopwatchStartedAt time.Time
+	name               string
+	menuStopwatch      *systray.MenuItem
 }
 
-func renderRunningTime() string {
-	duration := time.Now().Sub(timerStartedAt)
+func (app *app) Run() {
+	systray.Run(func() {
+		// XXX requires a .ico on windows
+		systray.SetIcon(assetData("assets/mac/icon.png"))
+
+		app.menuStopwatch = systray.AddMenuItem("Start stopwatch", "")
+		systray.AddMenuSeparatorItem()
+		mQuit := systray.AddMenuItem("Quit "+app.name, "")
+
+		// TODO: rather start a gochan when stopwatch starts, and stop it when it ends
+		go func() {
+			for {
+				time.Sleep(500 * time.Millisecond)
+				if app.stopwatchRunning {
+					app.updateRunningTimer()
+				}
+			}
+		}()
+
+		for {
+			select {
+			case <-app.menuStopwatch.ClickedCh:
+				if !app.stopwatchRunning {
+					app.stopwatchRunning = true
+					app.stopwatchStartedAt = time.Now()
+					app.updateRunningTimer()
+					app.menuStopwatch.SetTitle("Stop stopwatch")
+					notify.Notify(app.name, "Stopwatch started", "", "assets/icon128.png")
+				} else {
+					app.stopwatchRunning = false
+					systray.SetTitle("")
+					app.menuStopwatch.SetTitle("Start stopwatch")
+					notify.Notify(app.name, "Stopwatch stopped after "+app.renderRunningTime(), "", "assets/icon128.png")
+				}
+			case <-mQuit.ClickedCh:
+				systray.Quit()
+				os.Exit(0)
+			}
+		}
+	})
+}
+
+func (app *app) updateRunningTimer() {
+	systray.SetTitle(app.renderRunningTime())
+}
+
+func (app *app) renderRunningTime() string {
+	duration := time.Now().Sub(app.stopwatchStartedAt)
 	s := int(duration.Seconds()) % 60
 	m := int(duration.Minutes()) % 60
 	h := int(duration.Hours()) % 24
