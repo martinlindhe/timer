@@ -28,14 +28,13 @@ to create build/Gotime.dmg
 
 ![Linux](linux.png)
 
-On Ubuntu: sudo apt-get install libgtk-3-dev libappindicator3-dev
+Ubuntu: `sudo apt-get install libgtk-3-dev libappindicator3-dev`
 
     go get github.com/martinlindhe/timer/cmd/gotime
 
 
 # TODO
 * windows: .ico systray icon
-* sound when timer finish
 * menu separator, see https://github.com/getlantern/systray/pull/12
 
 

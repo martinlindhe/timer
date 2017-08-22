@@ -90,7 +90,7 @@ func (app *app) Run() {
 						timer := time.NewTimer(app.timerDuration)
 						go func() {
 							<-timer.C
-							notify.Notify(app.name, "Timer finished after "+renderDuration(app.timerDuration), "", app.icon)
+							notify.Alert(app.name, "Timer finished after "+renderDuration(app.timerDuration), "", app.icon)
 							app.stopTimer()
 						}()
 
