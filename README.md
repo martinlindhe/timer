@@ -34,7 +34,6 @@ Ubuntu: `sudo apt-get install libgtk-3-dev libappindicator3-dev`
 
 
 # TODO
-* windows: .ico systray icon
 * menu separator, see https://github.com/getlantern/systray/pull/12
 
 

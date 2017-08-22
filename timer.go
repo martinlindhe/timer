@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"runtime"
 	"time"
 
 	"github.com/getlantern/systray"
@@ -39,9 +40,7 @@ type app struct {
 
 func (app *app) Run() {
 	systray.Run(func() {
-		// XXX requires a .ico on windows
-		systray.SetIcon(assetData("assets/mac/icon.png"))
-
+		setTrayIcon()
 		app.menuStopwatch = systray.AddMenuItem("Start stopwatch", "")
 		app.menuTimer = systray.AddMenuItem("Start timer", "")
 		//systray.AddMenuSeparatorItem()
@@ -155,4 +154,12 @@ func renderDuration(dur time.Duration) string {
 		return fmt.Sprintf("%dm%ds", m, s)
 	}
 	return fmt.Sprintf("%ds", s)
+}
+
+func setTrayIcon() {
+	if runtime.GOOS == "windows" {
+		systray.SetIcon(assetData("assets/win/icon.ico"))
+	} else {
+		systray.SetIcon(assetData("assets/mac/icon.png"))
+	}
 }

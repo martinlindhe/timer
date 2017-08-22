@@ -22,10 +22,13 @@ build: data
 data:
 	go-bindata -nocompress -nometadata -pkg timer -o bindata.go assets/...
 
-###binary: | $(TARGET) ## Build release binary with cargo
-$(TARGET): clean-build build icon
+# Build release binary
+$(TARGET): clean-build build icon-mac icon-win
 
-icon:
+icon-win:
+	convert assets/win/icon.png assets/win/icon.ico
+
+icon-mac:
 	mkdir app.iconset
 	sips -z 16 16     assets/icon128.png --out app.iconset/icon_16x16.png
 	sips -z 32 32     assets/icon128.png --out app.iconset/icon_16x16@2x.png
