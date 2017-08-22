@@ -13,11 +13,11 @@ vpath $(TARGET) $(RELEASE_DIR)
 vpath $(APP_NAME) $(APP_DIR)
 vpath $(DMG_NAME) $(APP_DIR)
 
-run: data
-	go run cmd/timer/main.go
+run:
+	go run cmd/gotime/gotime.go
 
 build: data
-	go build -o build/gotime cmd/timer/timer.go 
+	go build -o build/gotime cmd/gotime/gotime.go 
 
 data:
 	go-bindata -nocompress -nometadata -pkg timer -o bindata.go assets/...
@@ -41,14 +41,16 @@ icon:
 	rm -R app.iconset
 	mv app.icns templates/mac/Gotime.app/Contents/Resources
 
-app: | $(APP_NAME) ## Clone macOS app template and mount binary
+ # Clone macOS app template and mount binary
+app: | $(APP_NAME)
 $(APP_NAME): $(TARGET) $(APP_TEMPLATE)
 	mkdir -p $(APP_BINARY_DIR)
 	cp -fRp $(APP_TEMPLATE) $(APP_DIR)
 	cp -fp $(APP_BINARY) $(APP_BINARY_DIR)
 	@echo "Created '$@' in '$(APP_DIR)'"
 
-dmg: | $(DMG_NAME) ## Pack macOS app into .dmg
+# Pack macOS app into .dmg
+dmg: | $(DMG_NAME)
 $(DMG_NAME): $(APP_NAME)
 	@echo "Packing disk image..."
 	hdiutil create $(DMG_DIR)/$(DMG_NAME) \
@@ -58,7 +60,8 @@ $(DMG_NAME): $(APP_NAME)
 		-ov -format UDZO
 	@echo "Packed '$@' in '$(APP_DIR)'"
 
-install: $(DMG_NAME) ## Mount disk image
+# Mount disk image
+install: $(DMG_NAME)
 	@open $(DMG_DIR)/$(DMG_NAME)
 
 clean-build:

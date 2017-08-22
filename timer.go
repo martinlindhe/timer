@@ -6,9 +6,9 @@ import (
 	"os"
 	"time"
 
+	"github.com/getlantern/systray"
 	"github.com/martinlindhe/inputbox"
 	"github.com/martinlindhe/notify"
-	"github.com/scryner/systray"
 )
 
 func init() {
@@ -44,7 +44,7 @@ func (app *app) Run() {
 
 		app.menuStopwatch = systray.AddMenuItem("Start stopwatch", "")
 		app.menuTimer = systray.AddMenuItem("Start timer", "")
-		systray.AddMenuSeparatorItem()
+		//systray.AddMenuSeparatorItem()
 		mQuit := systray.AddMenuItem("Quit "+app.name, "")
 
 		// TODO: rather start a gochan when stopwatch starts, and stop it when it ends
@@ -91,10 +91,7 @@ func (app *app) Run() {
 						go func() {
 							<-timer.C
 							notify.Notify(app.name, "Timer finished after "+renderDuration(app.timerDuration), "", app.icon)
-							app.timerRunning = false
-							app.menuStopwatch.Enable()
-							systray.SetTitle("")
-							app.menuTimer.SetTitle("Start timer")
+							app.stopTimer()
 						}()
 
 						app.timerRunning = true
@@ -105,6 +102,8 @@ func (app *app) Run() {
 						app.menuTimer.SetTitle("Stop timer")
 						notify.Notify(app.name, "Timer started", "", app.icon)
 					}
+				} else {
+					app.stopTimer()
 				}
 			case <-mQuit.ClickedCh:
 				systray.Quit()
@@ -112,6 +111,13 @@ func (app *app) Run() {
 			}
 		}
 	})
+}
+
+func (app *app) stopTimer() {
+	app.timerRunning = false
+	app.menuStopwatch.Enable()
+	systray.SetTitle("")
+	app.menuTimer.SetTitle("Start timer")
 }
 
 func (app *app) updateStopwatch() {
