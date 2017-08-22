@@ -120,7 +120,11 @@ func (app *app) stopTimer() {
 }
 
 func (app *app) updateStopwatch() {
-	systray.SetTitle(app.renderStopwatch())
+	if runtime.GOOS == "windows" {
+		app.menuStopwatch.SetTitle("Stop stopwatch (" + app.renderStopwatch() + ")")
+	} else {
+		systray.SetTitle(app.renderStopwatch())
+	}
 }
 
 func (app *app) renderStopwatch() string {
@@ -135,7 +139,11 @@ func (app *app) renderStopwatch() string {
 }
 
 func (app *app) updateTimer() {
-	systray.SetTitle(app.renderTimer())
+	if runtime.GOOS == "windows" {
+		app.menuTimer.SetTitle("Stop timer (" + app.renderTimer() + ")")
+	} else {
+		systray.SetTitle(app.renderTimer())
+	}
 }
 
 func (app *app) renderTimer() string {
