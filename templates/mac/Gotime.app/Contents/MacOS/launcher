@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Dynamically discover canonical path to app binary
+BIN_DIR=$(cd "$(dirname "$0")"; pwd)
+
+# Start app in user's home directory
+cd "$HOME"
+
+# Engage
+exec "$BIN_DIR/gotime"
