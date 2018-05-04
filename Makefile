@@ -69,3 +69,8 @@ install: $(DMG_NAME)
 
 clean-build:
 	rm -rf $(APP_DIR)
+
+update-deps:
+	rm -rf vendor
+	dep ensure
+	dep ensure -update

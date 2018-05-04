@@ -1,0 +1,16 @@
+[[constraint]]
+  branch = "master"
+  name = "github.com/getlantern/systray"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/martinlindhe/inputbox"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/martinlindhe/notify"
+
+[prune]
+  go-tests = true
+  non-go = true
+  unused-packages = true
