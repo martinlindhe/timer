@@ -109,7 +109,10 @@ func (app *app) Run() {
 				os.Exit(0)
 			}
 		}
-	})
+	},
+		func() {
+			// onExit
+		})
 }
 
 func (app *app) stopTimer() {
