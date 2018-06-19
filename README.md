@@ -30,7 +30,7 @@ to create build/Gotime.dmg
 
 Ubuntu: `sudo apt-get install libgtk-3-dev libappindicator3-dev`
 
-    go get github.com/martinlindhe/timer/cmd/gotime
+    go get -u github.com/martinlindhe/timer/cmd/gotime
 
 
 ### Windows
